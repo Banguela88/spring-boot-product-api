@@ -204,16 +204,24 @@ spring.jpa.show-sql=true
 | `show-sql=true` | Exibe no console o SQL gerado pelo Hibernate — útil para aprender |
 
 ---
-
 ### Etapa 7 — Criação da tabela com Flyway
 
-No início, a tabela foi criada automaticamente pelo Hibernate (`spring.jpa.hibernate.ddl-auto=update`). Para seguir a aula e as boas práticas, a criação passou para o **Flyway**:
+Seguindo as boas práticas, toda a estrutura do banco é criada por **scripts SQL versionados com o Flyway**, e não gerada automaticamente pelo Hibernate.
 
-1. A linha `ddl-auto=update` foi comentada.
-2. A tabela gerada pelo Hibernate foi removida no pgAdmin (o Flyway não executa em um banco que já tem tabelas que ele não criou).
-3. Foi criado o script `src/main/resources/db/migration/V1__create-table-product.sql` (ver [Modelo de dados](#-modelo-de-dados)).
-4. Na inicialização, o console confirmou: `Successfully applied 1 migration`.
+#### Por que Flyway
 
+| Geração automática (`ddl-auto`) | Flyway (scripts versionados) |
+|---|---|
+| A tabela é criada "por baixo dos panos", sem registro do que foi feito | Cada alteração é um arquivo `.sql` versionado no Git |
+| Não há histórico de quando nem por que o banco mudou | A tabela `flyway_schema_history` registra cada script executado, com data e checksum |
+| Pode gerar estruturas diferentes entre ambientes | O mesmo script roda em todos os ambientes (desenvolvimento, homologação, produção), na mesma ordem |
+| Indicada apenas para protótipos | Padrão de mercado em ambientes profissionais |
+
+#### Como foi feito
+
+1. Foi criado o script `src/main/resources/db/migration/V1__create-table-product.sql` (ver [Modelo de dados](#-modelo-de-dados)), com a sequência `product_seq` e a tabela `product`.
+2. O `application.properties` não usa `ddl-auto`, então o Hibernate apenas lê e grava dados, sem alterar a estrutura do banco.
+3. Ao iniciar a aplicação, o Flyway executou o script automaticamente:
 ---
 
 ### Etapa 8 — Desenvolvimento do código
@@ -669,6 +677,5 @@ Registro dos erros enfrentados durante o desenvolvimento e de como foram diagnos
 
 Minha rotina é investigar incidentes, analisar cenários de erro e fazer a ponte entre clientes e desenvolvimento. Venho do Delphi e do C#, e estou aprendendo **Java e Spring Boot** para entender como as aplicações que eu sustento funcionam por dentro, da configuração ao log de erro, e dar suporte com mais profundidade técnica.
 
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-conectar-0A66C2?logo=linkedin)]([https://www.linkedin.com/in/pamela-souza-core-banking/](https://www.linkedin.com/in/pamela-souza-core-banking/))
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-conectar-0A66C2?logo=linkedin)](https://www.linkedin.com/in/pamela-souza-core-banking/)
 [![GitHub](https://img.shields.io/badge/GitHub-Banguela88-181717?logo=github)](https://github.com/Banguela88)
-
