@@ -245,10 +245,10 @@ O **Bruno** é um cliente HTTP (alternativa ao Postman) usado para enviar requis
 | Requisição no Bruno | Método | URL | Body |
 |---|---|---|---|
 | `Listar_Produtos` | GET | `http://localhost:8080/products` | — |
-| `Listar_Produtos_ID` | GET | `http://localhost:8080/products/1` | — |
-| `Criar_Produto` | POST | `http://localhost:8080/products` | JSON |
-| `Atualizar_Produto` | PUT | `http://localhost:8080/products/1` | JSON |
-| `Apagar_Produto` | DELETE | `http://localhost:8080/products/1` | — |
+| `Listar_Produtos_ID` | GET | `http://localhost:8080/products/{id}` | — |
+| `Incluir_Produto` | POST | `http://localhost:8080/products` | JSON |
+| `Atualizar_Produto` | PUT | `http://localhost:8080/products/{id}` | JSON |
+| `Apagar_Produto` | DELETE | `http://localhost:8080/products/{id}` | — |
 
 **Como configurar uma requisição com corpo (POST/PUT):**
 
@@ -535,32 +535,40 @@ Invoke-RestMethod -Method Delete -Uri http://localhost:8080/products/1
 
 ## ✅ Comprovação dos testes
 
-Testes manuais executados no **Bruno**, cobrindo os cenários de sucesso e de erro de cada endpoint.
+Testes manuais executados no **Bruno**, cobrindo os cenários de sucesso e de erro de cada endpoint. Os ids refletem os dados reais do banco no momento dos testes.
 
 | # | Cenário | Método | Rota | Corpo enviado | Status esperado | Status obtido | Resultado |
 |---|---|---|---|---|---|---|---|
-| 1 | Listar com banco vazio | `GET` | `/products` | — | `200` + `[]` | `200` + `[]` | ✅ |
-| 2 | Criar produto | `POST` | `/products` | `{"name":"Caneca","price":25}` | `201` | `201` | ✅ |
-| 3 | Listar com dados | `GET` | `/products` | — | `200` + lista | `200` + lista | ✅ |
-| 4 | Buscar id existente | `GET` | `/products/1` | — | `200` | `200` | ✅ |
-| 5 | Buscar id inexistente | `GET` | `/products/9999` | — | `404` | `404` | ✅ |
-| 6 | Atualizar id existente | `PUT` | `/products/1` | `{"name":"Caneca Personalizada","price":35}` | `200` | `200` | ✅ |
-| 7 | Atualizar id inexistente | `PUT` | `/products/9999` | `{"name":"X","price":1}` | `404` | `404` | ✅ |
-| 8 | Remover id existente | `DELETE` | `/products/1` | — | `204` | `204` | ✅ |
-| 9 | Remover id já removido | `DELETE` | `/products/1` | — | `404` | `404` | ✅ |
-| 10 | Conferir remoção | `GET` | `/products/1` | — | `404` | `404` | ✅ |
+| 1 | Criar produto | `POST` | `/products` | `{"name":"Cartucho HP 2700","price":140}` | `201` | `201 Created` (id `152` gerado) | ✅ |
+| 2 | Listar produtos | `GET` | `/products` | — | `200` + lista | `200 OK` + lista com o produto criado | ✅ |
+| 3 | Buscar id existente | `GET` | `/products/103` | — | `200` | `200 OK` | ✅ |
+| 4 | Buscar id inexistente | `GET` | `/products/999` | — | `404` | `404 Not Found` | ✅ |
+| 5 | Atualizar produto | `PUT` | `/products/103` | `{"name":"Lápis de Cor FaberCastell","price":130}` | `200` | `200 OK` com os dados alterados | ✅ |
+| 6 | Remover produto | `DELETE` | `/products/103` | — | `204` | `204 No Content` | ✅ |
+| 7 | Conferir dados no banco | SQL | `select * from product` | — | Registros gravados | Registros listados no pgAdmin | ✅ |
 
 ### Evidências
 
-| Teste | Captura |
-|---|---|
-| Criar produto (`201`) | ![POST 201](docs/images/01-post-201.png) |
-| Listar produtos (`200`) | ![GET lista](docs/images/02-get-listar.png) |
-| Buscar por id (`200`) | ![GET id](docs/images/03-get-id-200.png) |
-| Buscar id inexistente (`404`) | ![GET 404](docs/images/04-get-id-404.png) |
-| Atualizar (`200`) | ![PUT 200](docs/images/05-put-200.png) |
-| Remover (`204`) | ![DELETE 204](docs/images/06-delete-204.png) |
-| Dados no banco (pgAdmin) | ![pgAdmin](docs/images/07-pgadmin.png) |
+#### 1. Criar produto — `POST /products` → `201 Created`
+![Criar produto](docs/images/incluir_produto.png)
+
+#### 2. Listar produtos — `GET /products` → `200 OK`
+![Listar produtos](docs/images/listar_produto.png)
+
+#### 3. Buscar por id — `GET /products/103` → `200 OK`
+![Buscar por id](docs/images/listar_produto_id.png)
+
+#### 4. Buscar id inexistente — `GET /products/999` → `404 Not Found`
+![Produto não encontrado](docs/images/produto_nao_encontrado.png)
+
+#### 5. Atualizar produto — `PUT /products/103` → `200 OK`
+![Atualizar produto](docs/images/alterar_produto.png)
+
+#### 6. Remover produto — `DELETE /products/103` → `204 No Content`
+![Remover produto](docs/images/apagar_produto.png)
+
+#### 7. Dados gravados no PostgreSQL (pgAdmin)
+![Banco de dados](docs/images/banco_dados.png)
 
 ---
 
