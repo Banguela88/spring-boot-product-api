@@ -670,10 +670,8 @@ Registro dos erros enfrentados durante o desenvolvimento e de como foram diagnos
 ## 🚀 Próximos passos
 
 - [ ] Validação dos dados de entrada (`@Valid`, `@NotBlank`, `@Positive`)
-- [ ] Usar DTOs para separar o modelo do banco do contrato da API
 - [ ] Tratamento global de erros com `@ControllerAdvice`
 - [ ] Documentação interativa com Swagger / OpenAPI
-- [ ] Testes automatizados (JUnit + MockMvc)
 - [ ] Usar `BigDecimal` para valores monetários
 - [ ] Executar o banco com Docker
 
